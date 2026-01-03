@@ -118,5 +118,17 @@ def route(user_input: str, tasks: list[Task], pending_add: bool) -> RouteResult:
             should_save=True,
         )
 
-
-    return RouteResult(message="Unknown command. Try: add, list, done <id>, exit")
+    return RouteResult(
+        message=(
+            "Unknown command.\n"
+            "Available commands:\n"
+            "  add <text>\n"
+            "  add\n"
+            "  list\n"
+            "  done <id>\n"
+            "  delete <id>\n"
+            "  plan\n"
+            "  help\n"
+            "  exit"
+        )
+    )

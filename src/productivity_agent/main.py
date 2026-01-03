@@ -7,7 +7,7 @@ def main() -> None:
     pending_add = False
 
     print("🧠 Personal Productivity Agent")
-    print("Commands: add <text>, list, done <id>, plan, help, exit")
+    print("Commands: add <text>, delete <id>, list, done <id>, plan, help, exit")
 
     while True:
         user_input = input("> ")
