@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from .agent import add_task, format_tasks, mark_task_done, delete_task
+from .agent import add_task, format_tasks, mark_task_done, delete_task, suggest_daily_plan
 from .storage import save_tasks
 from .models import Task
 
@@ -50,6 +50,19 @@ def route(user_input: str, tasks: list[Task], pending_add: bool) -> RouteResult:
                 "  exit            Exit the agent"
             )
         )
+
+    if command == "plan":
+        suggestions = suggest_daily_plan(tasks)
+
+        if not suggestions:
+            return RouteResult(message="No pending tasks. You're all caught up 🎉")
+
+        lines = ["Today's suggested tasks:"]
+        for task in suggestions:
+            lines.append(f"🕒 [{task.id}] {task.title}")
+
+        return RouteResult(message="\n".join(lines))
+
 
 
     if command == "add":

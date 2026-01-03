@@ -38,3 +38,8 @@ def delete_task(tasks: list[Task], task_id: int) -> Task | None:
             return tasks.pop(i)
     return None
 
+
+def suggest_daily_plan(tasks: list[Task], limit: int = 3) -> list[Task]:
+    pending_tasks = [t for t in tasks if t.status == "pending"]
+    return pending_tasks[:limit]
+
