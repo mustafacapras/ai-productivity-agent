@@ -30,3 +30,11 @@ def mark_task_done(tasks: list[Task], task_id: int) -> Task | None:
             task.status = "done"
             return task
     return None
+
+
+def delete_task(tasks: list[Task], task_id: int) -> Task | None:
+    for i, task in enumerate(tasks):
+        if task.id == task_id:
+            return tasks.pop(i)
+    return None
+

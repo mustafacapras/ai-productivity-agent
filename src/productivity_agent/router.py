@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from .agent import add_task, format_tasks, mark_task_done
+from .agent import add_task, format_tasks, mark_task_done, delete_task
 from .storage import save_tasks
 from .models import Task
 
@@ -18,7 +18,7 @@ def route(user_input: str, tasks: list[Task], pending_add: bool) -> RouteResult:
     if not text:
         return RouteResult(message="")
 
-    # 1) Eğer agent az önce soru sorduyse: gelen input = task title
+
     if pending_add:
         task = add_task(tasks, text)
         save_tasks(tasks)
@@ -28,7 +28,7 @@ def route(user_input: str, tasks: list[Task], pending_add: bool) -> RouteResult:
             should_save=True,
         )
 
-    # 2) Normal komut çözümleme
+
     command = text.split(maxsplit=1)[0].lower()
 
     if command == "exit":
@@ -36,6 +36,21 @@ def route(user_input: str, tasks: list[Task], pending_add: bool) -> RouteResult:
 
     if command == "list":
         return RouteResult(message=format_tasks(tasks))
+
+    if command == "help":
+        return RouteResult(
+            message=(
+                "Available commands:\n"
+                "  add <text>      Add a new task\n"
+                "  add             Agent asks for task title\n"
+                "  list            Show all tasks\n"
+                "  done <id>       Mark task as completed\n"
+                "  delete <id>     Delete a task\n"
+                "  help            Show this help message\n"
+                "  exit            Exit the agent"
+            )
+        )
+
 
     if command == "add":
         parts = text.split(maxsplit=1)
@@ -69,5 +84,26 @@ def route(user_input: str, tasks: list[Task], pending_add: bool) -> RouteResult:
             message=f"Task [{task.id}] marked as done.",
             should_save=True,
         )
+
+    if command == "delete":
+        parts = text.split()
+        if len(parts) != 2:
+            return RouteResult(message="Usage: delete <task_id>")
+
+        try:
+            task_id = int(parts[1])
+        except ValueError:
+            return RouteResult(message="Task id must be a number.")
+
+        task = delete_task(tasks, task_id)
+        if task is None:
+            return RouteResult(message=f"No task found with id {task_id}")
+
+        save_tasks(tasks)
+        return RouteResult(
+            message=f"Task [{task.id}] deleted.",
+            should_save=True,
+        )
+
 
     return RouteResult(message="Unknown command. Try: add, list, done <id>, exit")
