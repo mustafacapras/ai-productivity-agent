@@ -1,76 +1,25 @@
-from .agent import add_task, format_tasks, mark_task_done
-from .storage import load_tasks, save_tasks
-
+from .storage import load_tasks
+from .router import route
 
 
 def main() -> None:
     tasks = load_tasks()
-    pending_add: bool = False
+    pending_add = False
 
     print("🧠 Personal Productivity Agent")
-    print("Commands: add <text>, list, exit")
+    print("Commands: add <text>, list, done <id>, exit")
 
     while True:
-        user_input = input("> ").strip()
+        user_input = input("> ")
 
-        if not user_input:
-            continue
+        result = route(user_input, tasks, pending_add)
+        pending_add = result.pending_add
 
-        if pending_add:
-            title = user_input
-            task = add_task(tasks, title)
-            save_tasks(tasks)
-            print(f"Added: [{task.id}] {task.title}")
-            pending_add = False
-            continue
+        if result.message:
+            print(result.message)
 
-
-        command = user_input.split(maxsplit=1)[0].lower()
-
-        if command == "exit":
-            print("Goodbye 👋")
+        if result.should_exit:
             break
-
-        if command == "list":
-            print(format_tasks(tasks))
-            continue
-
-        if command == "add":
-            parts = user_input.split(maxsplit=1)
-
-            if len(parts) == 1:
-                print("What is the task title?")
-                pending_add = True
-                continue
-
-            title = parts[1]
-            task = add_task(tasks, title)
-            save_tasks(tasks)
-            print(f"Added: [{task.id}] {task.title}")
-            continue
-
-        if command == "done":
-            if len(user_input.split()) != 2:
-                print("Usage: done <task_id>")
-                continue
-
-            try:
-                task_id = int(user_input.split()[1])
-            except ValueError:
-                print("Task id must be a number.")
-                continue
-
-            task = mark_task_done(tasks, task_id)
-            if task is None:
-                print(f"No task found with id {task_id}")
-                continue
-
-            save_tasks(tasks)
-            print(f"Task [{task.id}] marked as done.")
-            continue
-
-
-        print("Unknown command. Try: add <text>, list, exit")
 
 
 if __name__ == "__main__":
