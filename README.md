@@ -75,6 +75,9 @@ add <task description>   Add a new task
 add                      Agent asks for task title
 list                     Show all tasks
 done <task_id>           Mark task as completed
+delete <task_id>         Delete a task
+plan                     Show today's suggested tasks
+help                     Show help message
 exit                     Exit the agent
 ```
 
@@ -101,6 +104,9 @@ Task [1] marked as done.
 * **JSON persistence** – simple, inspectable memory layer
 * **Router pattern** – separates decision logic from I/O
 * **Explicit state handling** – agent context is visible and understandable
+* **Stable task IDs** – task IDs are unique identifiers and are **not reused** after deletion
+
+Task IDs intentionally remain stable even if tasks are deleted. This mirrors real-world systems (e.g. database primary keys) and avoids hidden side effects or identity confusion.
 
 These choices make the project ideal for learning, interviews, and portfolio review.
 
